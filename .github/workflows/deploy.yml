@@ -1,0 +1,29 @@
+name: Deploy Node.js App
+
+on:
+  push:
+    branches:
+      - master # Adjust the branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: |
+        docker build -t your-node-app:latest .
+        docker run -d -p 9000:9000 --name your-node-app-container your-node-app:latest
+
+    - name: Check Deployment
+      run: |
+        # Check if the application is running
+        if curl -IsS http://localhost:9000 | head -1 | grep -q "200 OK"; then
+          echo "Deployment successful."
+        else
+          echo "Deployment failed."
+          exit 1
+        fi
